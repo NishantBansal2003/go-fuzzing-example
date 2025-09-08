@@ -15,6 +15,9 @@ func FuzzParseComplex(f *testing.F) {
 
 // FuzzEvalExpr fuzzes the EvalExpr function. It should never panic on any input
 func FuzzEvalExpr(f *testing.F) {
+	f.Add("1+3")
+	f.Add("-2+3")
+
 	f.Fuzz(func(t *testing.T, expr string) {
 		result, err := EvalExpr(expr)
 		if err != nil {
