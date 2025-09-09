@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -15,8 +16,21 @@ func FuzzParseComplex(f *testing.F) {
 
 // FuzzEvalExpr fuzzes the EvalExpr function. It should never panic on any input
 func FuzzEvalExpr(f *testing.F) {
-	f.Add("1+3")
-	f.Add("-2+3")
+	// Hardcoded paths to seed files
+	seedFiles := []string{
+		"testdata/seed/seed0.txt",
+		"testdata/seed1.txt",
+	}
+
+	for _, path := range seedFiles {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			f.Errorf("failed to read seed file %s: %v", path, err)
+		}
+
+		// Add the contents of the seed file as a fuzz input
+		f.Add(string(data))
+	}
 
 	f.Fuzz(func(t *testing.T, expr string) {
 		result, err := EvalExpr(expr)
